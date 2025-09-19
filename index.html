@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 4 Math Quest — ×10 • Rounding • Comparing/Ordering (150)</title>
+<style>
+  :root{
+    --bg:#fff6fb; --card:#ffe8f5; --accent:#ff6fb3; --accent-2:#b37cff;
+    --ink:#2d2a32; --good:#2e8b57; --bad:#c62828; --muted:#6a6a6a;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family: "Trebuchet MS", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: radial-gradient(1200px 600px at 20% -10%, #ffe0f2 10%, transparent 50%),
+                radial-gradient(1200px 600px at 120% 10%, #efe4ff 10%, transparent 50%),
+                linear-gradient(160deg, var(--bg), #f9f1ff 40%, #fff);
+    color:var(--ink);
+  }
+  header{
+    padding:14px 16px; text-align:center;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color:white; position:sticky; top:0; z-index:5;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+  }
+  header h1{margin:6px 0 0; font-size: clamp(20px, 2.6vw, 30px); letter-spacing:.3px}
+  header small{opacity:.95}
+  .wrap{max-width:1200px; margin:0 auto; padding:0 16px}
+  .panel{min-height:calc(100vh - 120px); display:flex; flex-direction:column; justify-content:flex-start;
+    background:var(--card); border-radius:18px; padding:18px; box-shadow:0 8px 20px rgba(255,105,180,.15); border:2px solid #ffd3ec;}
+  .modebar{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:6px 0 14px}
+  .chip{border:none; padding:10px 14px; border-radius:999px; background:white; color:#5b3d67; font-weight:600;
+        box-shadow:0 2px 8px rgba(0,0,0,.06); border:2px solid #fff; opacity:.6; pointer-events:none}
+  .toolbar{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center; margin:6px 0 4px}
+  .hud{display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin:10px 0 0}
+  .badge{background:white; border-radius:12px; padding:8px 12px; border:2px solid #ffd3ec; font-weight:700}
+  .card{background:white; border-radius:18px; padding:16px; margin-top:14px; border:2px solid #ffd3ec;
+        box-shadow:0 8px 18px rgba(0,0,0,.06); flex:1; display:flex; flex-direction:column;}
+  .question{font-size: clamp(18px, 2.6vw, 30px); text-align:center; line-height:1.35; margin:6px 0 10px}
+  .number-line{display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin:8px 0; flex:1; align-items:center}
+  .big-num{font-size: clamp(26px, 4.8vw, 46px); letter-spacing:1px}
+  .digit{display:inline-block; padding:2px 3px; border-radius:6px}
+  .digit.under{ text-decoration: underline 3px var(--accent); text-underline-offset: 6px; }
+  .digit.hl{ background: #fff0f7; outline: 2px dashed var(--accent); }
+  .optbar{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:12px}
+  .opt{padding:12px 16px; border-radius:14px; border:2px solid #e8d9ff; background:#fbf9ff; cursor:pointer; font-weight:800}
+  .opt:hover{transform:translateY(-1px)}
+  .opt.good{background:#eaf7ef; border-color:#c6ebd2}
+  .opt.bad{background:#fdeaea; border-color:#f7caca}
+  .muted{color:var(--muted); font-size:14px}
+  .explain{margin-top:10px; background:#fff7ff; border:2px dashed #f7cafa; padding:10px; border-radius:12px}
+  .controls{display:flex; gap:10px; justify-content:center; margin-top:14px}
+  .btn{border:none; padding:12px 16px; border-radius:12px; cursor:pointer; font-weight:800; color:white;
+       background:linear-gradient(90deg,var(--accent),var(--accent-2)); box-shadow:0 4px 12px rgba(0,0,0,.12)}
+  .btn.secondary{background:white; color:#5b3d67; border:2px solid #ffd3ec; box-shadow:none}
+  .footer-note{text-align:center; margin-top:14px; color:#856187}
+  .hidden{display:none}
+  .confetti{position:fixed; inset:0; pointer-events:none}
+</style>
+</head>
+<body>
+<header>
+  <small>One‑Player • Fullscreen • Sound On/Off</small>
+  <h1>Grade 4 Math Quest — <em>×10</em>, Rounding & Comparing/Ordering</h1>
+</header>
+
+<div class="wrap">
+  <div class="panel">
+    <div class="modebar" title="Locked: 50 ×10 → 50 Rounding → 50 Comparing/Ordering">
+      <button class="chip">Mode 1: Ten Times Greater (50)</button>
+      <button class="chip">Mode 2: Rounding (50)</button>
+      <button class="chip">Mode 3: Comparing & Ordering (50)</button>
+    </div>
+
+    <div class="toolbar">
+      <button id="fsBtn" class="chip" title="Fullscreen">Fullscreen</button>
+      <div class="badge">Q <span id="qNum">1</span>/<span id="qTotal">150</span></div>
+      <div class="badge">Score: <span id="score">0</span></div>
+      <div class="badge">Streak: <span id="streak">0</span></div>
+    </div>
+
+    <div class="card">
+      <div id="prompt" class="question">Loading…</div>
+      <div id="work" class="number-line"></div>
+      <div id="options" class="optbar"></div>
+      <div id="feedback" class="explain hidden"></div>
+      <div class="controls">
+        <button id="nextBtn" class="btn">Next</button>
+        <button id="resetBtn" class="btn secondary">Reset</button>
+        <label class="toggle" style="display:flex;align-items:center;gap:6px;">
+          <input id="soundToggle" type="checkbox" checked> <span>Sound</span>
+        </label>
+        <label class="toggle" style="display:flex;align-items:center;gap:6px;">
+          <input id="musicToggle" type="checkbox"> <span>Music</span>
+        </label>
+      </div>
+    </div>
+
+    <div id="endCard" class="card hidden">
+      <h2>Great job! 🎉</h2>
+      <p>You answered <b id="endCorrect"></b> out of <b id="endTotal"></b> correctly.</p>
+      <p class="muted">Sequence is fixed to 150 questions. Click Play Again to restart.</p>
+      <button id="playAgain" class="btn">Play Again</button>
+    </div>
+
+    <p class="footer-note muted">
+      In Mode 1, we ONLY test “ten times greater”. Numbers are whole numbers and always show commas (e.g., 1,234,567).
+    </p>
+  </div>
+</div>
+
+<canvas class="confetti" id="confetti"></canvas>
+
+<script>
+(() => {
+// ---------- helpers & state ----------
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+const rnd = (min, max) => Math.floor(Math.random()*(max-min+1))+min;
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+const formatNum = (n) => Number(n).toLocaleString('en-US');
+
+const state = {
+  qIndex: 0,
+  qTotal: 150,
+  score: 0,
+  streak: 0,
+  current: null,
+  plan: buildPlan(), // 50/50/50
+};
+
+function buildPlan(){
+  const arr=[]; for(let i=0;i<50;i++) arr.push('x10'); for(let i=0;i<50;i++) arr.push('round'); for(let i=0;i<50;i++) arr.push('compare');
+  return arr;
+}
+
+function placeName(p){return ['ones','tens','hundreds','thousands','ten-thousands','hundred-thousands','millions'][p]||'place';}
+
+// ---------- audio ----------
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let allowSound = true, allowMusic = false, musicNode = null;
+function beep(freq=660, dur=0.12, type='sine', gain=0.06){
+  if(!allowSound) return;
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type; o.frequency.value = freq; g.gain.value = gain; o.connect(g).connect(audioCtx.destination);
+  o.start(); setTimeout(()=>o.stop(), dur*1000);
+}
+function chord(){ [523.25,659.25,783.99].forEach((f,i)=>setTimeout(()=>beep(f,0.12,'triangle',0.05), i*60)); }
+function buzz(){ beep(220,0.25,'sawtooth',0.05); }
+function startMusic(){
+  if(!allowMusic || musicNode){ return; }
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain(); g.gain.value = 0.015; o.type='triangle';
+  let step=0; const notes=[220,277,330,277,220,330,392,330];
+  const iv=setInterval(()=>{ if(!musicNode){ clearInterval(iv); return; } o.frequency.setValueAtTime(notes[step%notes.length], audioCtx.currentTime); step++; }, 400);
+  o.connect(g).connect(audioCtx.destination); o.start(); musicNode={o,iv};
+}
+function stopMusic(){ if(musicNode){ musicNode.o.stop(); clearInterval(musicNode.iv); musicNode=null; } }
+
+// ---------- visuals ----------
+function placeValueTable(num, highlightOffset = null){
+  const labels = ['Ones','Tens','Hundreds','Thousands','Ten-Thousands','Hundred-Thousands','Millions'];
+  const s = String(num);
+  const cells = [];
+  for(let i=0;i<s.length;i++){
+    const digit = s[i];
+    const offset = s.length-1-i;
+    const label = labels[offset]||`${10**offset}`;
+    const hl = (highlightOffset===offset) ? 'style="background:#fff0f7; outline:2px dashed var(--accent); border-radius:10px; padding:6px"' : '';
+    cells.push(`<td ${hl}><div style="font-size:clamp(18px,2.6vw,28px);"><b>${digit}</b></div><div class="muted">${label}</div></td>`);
+  }
+  return `<table style="margin:8px auto;border-collapse:separate;border-spacing:8px 4px"><tr>${cells.join('')}</tr></table>`;
+}
+function svgTimesTenArrow(){
+  return `<svg width="220" height="40" viewBox="0 0 220 40" aria-hidden="true">
+    <defs><marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#b37cff"></path></marker></defs>
+    <line x1="10" y1="20" x2="210" y2="20" stroke="#b37cff" stroke-width="3" marker-end="url(#arrow)"></line>
+    <text x="110" y="15" text-anchor="middle" font-size="12" fill="#b37cff">×10</text>
+  </svg>`;
+}
+function svgRoundNumberLine(down, n, up){
+  const w=360, h=54, pad=20;
+  const pos = (val)=> (up===down) ? pad : pad + (w-2*pad) * ((val - down)/(up-up+ (up-down)));
+  // Fix division: (up-down) not (up-up)
+  const denom = (up - down) || 1;
+  const pxDown = pad, pxUp = w - pad, pxN = pad + (w-2*pad)*((n - down)/denom);
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">
+    <line x1="${pxDown}" y1="28" x2="${pxUp}" y2="28" stroke="#888" stroke-width="3"></line>
+    <line x1="${pxDown}" y1="22" x2="${pxDown}" y2="34" stroke="#888" stroke-width="3"></line>
+    <line x1="${pxUp}" y1="22" x2="${pxUp}" y2="34" stroke="#888" stroke-width="3"></line>
+    <circle cx="${pxN}" cy="28" r="6" fill="#ff6fb3"></circle>
+    <text x="${pxDown}" y="48" text-anchor="middle" font-size="12" fill="#666">${formatNum(down)}</text>
+    <text x="${pxUp}" y="48" text-anchor="middle" font-size="12" fill="#666">${formatNum(up)}</text>
+    <text x="${pxN}" y="14" text-anchor="middle" font-size="12" fill="#ff6fb3">${formatNum(n)}</text>
+  </svg>`;
+}
+
+// ---------- rendering helpers ----------
+function highlightDigitHTML(n, idx){
+  const s = String(n);
+  return s.split('').map((ch,i)=>`<span class="${i===idx?'digit hl':'digit'}">${ch}</span>`).join('');
+}
+function underlineDigitHTML(n, idx){
+  const s = String(n);
+  return s.split('').map((ch,i)=>`<span class="${i===idx?'digit under':'digit'}">${ch}</span>`).join('');
+}
+
+// ---------- generators ----------
+// Mode 1: ×10 relationship (ONLY ten times greater)
+function genX10(){
+  const d = rnd(1,9);
+  // choose two places that are exactly one apart (ensures a true ×10 relation)
+  const pSmall = rnd(0,5);      // e.g., tens..hundred-thousands
+  const pBig = pSmall + 1;      // left by one place => ×10
+  function inject(place){
+    const len = rnd(Math.max(place+1,3), 7);
+    const s = new Array(len).fill(0).map(()=>rnd(0,9));
+    const ri = len-1-place;
+    s[ri] = d; if(s[0]===0) s[0]=rnd(1,9);
+    return [Number(s.join('')), ri];
+  }
+  const [A, idxA] = inject(pBig);    // big place
+  const [B, idxB] = inject(pSmall);  // small place
+
+  const sA = String(A), sB = String(B);
+  const dA = Number(sA[idxA]), dB = Number(sB[idxB]);
+  const valA = dA * 10**(sA.length-1-idxA);
+  const valB = dB * 10**(sB.length-1-idxB);
+
+  const prompt = "Is the value of the highlighted digit in A ten times greater than in B?";
+  const workHTML = `<div class="number-line">
+    <div>A: <span class="big-num">${highlightDigitHTML(A, idxA)}</span></div>
+    <div>B: <span class="big-num">${highlightDigitHTML(B, idxB)}</span></div>
+  </div>`;
+  const options = [{k:"Yes",correct:true},{k:"No",correct:false}];
+
+  const eqSymbol = (valA === valB*10) ? '=' : '≠';
+  const exp = `
+    <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center; justify-content:center;">
+      <div>
+        <div><b>Value in A</b>: ${dA} × 10<sup>${sA.length-1-idxA}</sup> = <b>${formatNum(valA)}</b> (${placeName(sA.length-1-idxA)})</div>
+        ${placeValueTable(A, sA.length-1-idxA)}
+      </div>
+      <div style="align-self:center">${svgTimesTenArrow()}</div>
+      <div>
+        <div><b>Value in B</b>: ${dB} × 10<sup>${sB.length-1-idxB}</sup> = <b>${formatNum(valB)}</b> (${placeName(sB.length-1-idxB)})</div>
+        ${placeValueTable(B, sB.length-1-idxB)}
+      </div>
+    </div>
+    <div style="margin-top:6px"><b>Equation (Big = 10 × Small)</b>: <b>${formatNum(Math.max(valA,valB))}</b> ${eqSymbol} 10 × <b>${formatNum(Math.min(valA,valB))}</b></div>
+    <div style="margin-top:6px">${eqSymbol==='=' ? 'Yes — exactly 10 times.' : 'No — not 10 times.'}</div>
+  `;
+  return {prompt, workHTML, options, exp};
+}
+
+// Mode 2: Rounding (nearest 10, 100, 1,000, 10,000, 100,000, 1,000,000)
+function genRound(){
+  const bases = [10,100,1000,10000,100000,1000000];
+  const base = pick(bases);
+  const n = rnd(15, 9999999);
+  const place = Math.log10(base);
+  const idx = String(n).length-1 - place;
+  const rounded = Math.round(n/base)*base;
+  const down = Math.floor(n/base)*base;
+  const up = Math.ceil(n/base)*base;
+  const prompt = `Round this number to the nearest <b>${formatNum(base)}</b>. The underlined digit shows the rounding place.`;
+  const workHTML = `<div class="number-line"><div class="big-num">${underlineDigitHTML(n, idx)}</div></div>`;
+  // Options
+  const optsRaw = [rounded, down, up, rounded + base];
+  const seen=new Set(); const options=[];
+  for(const k of optsRaw){ if(!seen.has(k)){ seen.add(k); options.push({k:formatNum(k), correct:k===rounded}); } }
+  while(options.length<4){
+    const k = rounded + pick([-2,-1,1,2])*base;
+    if(!seen.has(k)){ seen.add(k); options.push({k:formatNum(k), correct:false}); }
+  }
+  // Explanation
+  const s = String(n);
+  const nextDigit = s[idx+1] || '0';
+  const ruleUp = Number(nextDigit)>=5;
+  const exp = `We round to the <b>${placeName(place)}</b> (underlined). The next digit is <b>${nextDigit}</b> → ${ruleUp?'<b>5–9 → round up</b>':'<b>0–4 → round down</b>'}.
+    <div style="margin-top:6px; display:flex; flex-direction:column; align-items:center;">${svgRoundNumberLine(down, n, up)}</div>
+    ${placeValueTable(n, place)}
+    <div>Correct rounded value: <b>${formatNum(rounded)}</b>.</div>`;
+  return {prompt, workHTML, options, exp};
+}
+
+// Mode 3: Comparing or Ordering (whole numbers)
+function genCompare(){ // possibly equal
+  const a = rnd(1,9999999); let b = rnd(1,9999999); if(Math.random()<0.25) b=a; else while(b===a) b=rnd(1,9999999);
+  const correct = (a===b)?'=':(a<b?'<':'>');
+  const prompt = `Choose the correct sign to make the statement true.`;
+  const workHTML = `<div class="number-line">
+    <div class="big-num">${formatNum(a)}</div>
+    <div class="big-num">&nbsp; ? &nbsp;</div>
+    <div class="big-num">${formatNum(b)}</div>
+  </div>`;
+  const options = [{k:'<',correct:correct==='<'},{k:'>',correct:correct==='>'},{k:'=',correct:correct==='='}];
+  const exp = explainCompare(a,b,correct);
+  return {prompt, workHTML, options, exp};
+}
+function explainCompare(a,b,sign){
+  const sa=String(a), sb=String(b);
+  const L=Math.max(sa.length,sb.length);
+  const A=sa.padStart(L,'0'), B=sb.padStart(L,'0');
+  let diffIdx=-1; for(let i=0;i<L;i++){ if(A[i]!==B[i]){ diffIdx=i; break; } }
+  if(diffIdx===-1){
+    return `Numbers are equal digit-by-digit — sign should be <b>=</b>.` + placeValueTable(a,0) + placeValueTable(b,0);
+  }
+  const placeOffset=L-1-diffIdx;
+  const compareText=(A[diffIdx]<B[diffIdx])?'A is smaller':'A is larger';
+  return `Compare from the highest place first.<br>
+          At the <b>${placeName(placeOffset)}</b> place: A has <b>${A[diffIdx]}</b>, B has <b>${B[diffIdx]}</b> → ${compareText}.<br>
+          Therefore, <b>${formatNum(a)} ${sign} ${formatNum(b)}</b>.`
+          + `<div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center; align-items:flex-start; margin-top:6px">`
+          + `<div>${placeValueTable(a, placeOffset)}</div>`
+          + `<div>${placeValueTable(b, placeOffset)}</div>`
+          + `</div>`;
+}
+function genOrder(){
+  const k = Math.random()<0.5 ? 3 : 4;
+  const nums = new Set(); while(nums.size<k) nums.add(rnd(1,9999999));
+  const arr = Array.from(nums);
+  const ascending = Math.random()<0.5;
+  const dirText = ascending ? 'least to greatest' : 'greatest to least';
+  const prompt = `Order the numbers from <b>${dirText}</b>.`;
+  const workHTML = `<div class="number-line">` + arr.map(n=>`<div class="big-num">${formatNum(n)}</div>`).join('<div style="width:14px"></div>') + `</div>`;
+  const correct = [...arr].sort((a,b)=>ascending?a-b:b-a);
+  const toStr = a=>a.map(x=>formatNum(x)).join(' , ');
+  const correctStr = toStr(correct);
+  const options = [{k:correctStr, correct:true}];
+  const seen = new Set([correctStr]);
+  while(options.length<4){
+    const cand = [...correct];
+    const i = Math.floor(Math.random()*(k-1));
+    [cand[i],cand[i+1]]=[cand[i+1],cand[i]];
+    const s = toStr(cand);
+    if(!seen.has(s)){ seen.add(s); options.push({k:s, correct:false}); }
+  }
+  const exp = `Correct order (${dirText}): <b>${correctStr}</b>.`;
+  return {prompt, workHTML, options: shuffle(options), exp};
+}
+function genCompareOrOrder(){ return Math.random()<0.5 ? genCompare() : genOrder(); }
+
+function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]); }
+
+// ---------- question flow ----------
+function nextQuestion(){
+  $('#feedback').classList.add('hidden');
+  $('#options').innerHTML='';
+  const mode = state.plan[state.qIndex] || 'compare';
+  let q;
+  if(mode==='x10') q = genX10();
+  else if(mode==='round') q = genRound();
+  else q = genCompareOrOrder();
+  state.current = q;
+  $('#prompt').innerHTML = q.prompt;
+  $('#work').innerHTML = q.workHTML;
+  q.options.forEach(o=>{
+    const b = document.createElement('button');
+    b.className='opt'; b.textContent=o.k;
+    b.addEventListener('click', ()=>grade(o,b));
+    $('#options').appendChild(b);
+  });
+  $('#qNum').textContent = state.qIndex+1;
+  $('#qTotal').textContent = state.qTotal;
+}
+function grade(opt, el){
+  if(el.dataset.done) return;
+  $$('#options .opt').forEach(b=>b.dataset.done='1');
+  const correctOpt = state.current.options.find(o=>o.correct);
+  if(opt.correct){
+    el.classList.add('good'); state.score++; state.streak++; chord();
+    if(state.streak%5===0) sprinkle();
+  }else{
+    el.classList.add('bad'); state.streak=0; buzz();
+  }
+  // Mark all
+  $$('#options .opt').forEach(b=>{
+    const o = state.current.options.find(x=>x.k==b.textContent);
+    if(o?.correct) b.classList.add('good');
+    if(!o?.correct && b!==el) b.classList.add('bad');
+  });
+  const verdict = opt.correct ? 'Correct! 🎉' : `Not quite. The correct answer is <b>${correctOpt.k}</b>.`;
+  $('#feedback').classList.remove('hidden');
+  $('#feedback').innerHTML = `<div>${verdict}</div><div style="margin-top:6px">${state.current.exp}</div>`;
+  $('#score').textContent = state.score;
+  $('#streak').textContent = state.streak;
+}
+function maybeEnd(){
+  if(state.qIndex+1 >= state.qTotal){
+    $('#endCorrect').textContent = state.score;
+    $('#endTotal').textContent = state.qTotal;
+    $('.card').classList.add('hidden');
+    $('#endCard').classList.remove('hidden');
+    sprinkle();
+    return true;
+  }
+  return false;
+}
+
+// ---------- confetti ----------
+const cvs = document.getElementById('confetti'); const ctx2 = cvs.getContext('2d');
+const pieces=[]; let rafId=null;
+function resize(){ cvs.width = innerWidth; cvs.height = innerHeight; }
+window.addEventListener('resize', resize); resize();
+function sprinkle(){
+  for(let i=0;i<80;i++){
+    pieces.push({ x: Math.random()*cvs.width, y: -10 - Math.random()*50, r: 4+Math.random()*6, vy: 2+Math.random()*3, vx: -2+Math.random()*4, rot: Math.random()*Math.PI });
+  }
+  if(!rafId) animate();
+}
+function animate(){
+  rafId = requestAnimationFrame(animate);
+  ctx2.clearRect(0,0,cvs.width,cvs.height);
+  pieces.forEach(p=>{
+    p.x += p.vx; p.y += p.vy; p.rot += 0.05;
+    ctx2.save(); ctx2.translate(p.x,p.y); ctx2.rotate(p.rot);
+    ctx2.fillStyle = (Math.random()<0.5)? '#ffafd2' : '#cab3ff';
+    ctx2.fillRect(-p.r/2,-p.r/2,p.r,p.r);
+    ctx2.restore();
+  });
+  for(let i=pieces.length-1;i>=0;i--){ if(pieces[i].y>cvs.height+20) pieces.splice(i,1); }
+  if(pieces.length===0){ cancelAnimationFrame(rafId); rafId=null; }
+}
+
+// ---------- events ----------
+document.getElementById('nextBtn').onclick = ()=>{
+  if(maybeEnd()) return;
+  state.qIndex++;
+  nextQuestion();
+};
+document.getElementById('resetBtn').onclick = ()=>{
+  state.qIndex=0; state.score=0; state.streak=0;
+  state.plan = buildPlan(); state.qTotal=150;
+  $('#endCard').classList.add('hidden'); $('.card').classList.remove('hidden');
+  $('#score').textContent='0'; $('#streak').textContent='0'; $('#qTotal').textContent=state.qTotal;
+  nextQuestion();
+};
+document.getElementById('playAgain').onclick = ()=>{
+  state.qIndex=0; state.score=0; state.streak=0;
+  state.plan = buildPlan(); state.qTotal=150;
+  $('#endCard').classList.add('hidden'); $('.card').classList.remove('hidden');
+  $('#score').textContent='0'; $('#streak').textContent='0'; $('#qTotal').textContent=state.qTotal;
+  nextQuestion();
+};
+document.getElementById('fsBtn').onclick = ()=>{
+  const el=document.documentElement;
+  if(!document.fullscreenElement){ el.requestFullscreen?.(); } else { document.exitFullscreen?.(); }
+};
+document.getElementById('soundToggle').onchange = (e)=>{ allowSound = e.target.checked; if(allowSound) beep(880,0.08,'sine',0.03); };
+document.getElementById('musicToggle').onchange = (e)=>{ allowMusic = e.target.checked; if(allowMusic) startMusic(); else stopMusic(); };
+
+// ---------- start ----------
+nextQuestion();
+})();</script>
+</body>
+</html>
